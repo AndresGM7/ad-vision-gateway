@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Servicio de IA (Backend)
+  ai_engine:
+    build: ./backend
+    container_name: ad_vision_engine
+    restart: always
+    expose:
+      - "8000" # Solo expuesto internamente a la red de Docker
+    networks:
+      - ad_tech_net
+
+  # Gateway (Nginx)
+  gateway:
+    image: nginx:alpine
+    container_name: ad_gateway
+    restart: always
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80" # El único puerto abierto al mundo
+    depends_on:
+      - ai_engine
+    networks:
+      - ad_tech_net
+
+networks:
+  ad_tech_net:
+    driver: bridge
