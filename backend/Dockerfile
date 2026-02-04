@@ -1,17 +1,26 @@
-# 1. Elegimos el Sistema Operativo base (Linux con Python)
 FROM python:3.9-slim
 
-# 2. Creamos una carpeta de trabajo dentro del contenedor
 WORKDIR /app
 
-# 3. Primero copiamos solo los requerimientos (Truco de caché para que sea rápido)
-COPY requirements.txt .
+# 1. INSTALACIÓN DE DEPENDENCIAS DEL SISTEMA (System Level)
+# - libgl1 y libglib2.0: Necesarios para que OpenCV funcione.
+# - tesseract-ocr: El motor de lectura de texto.
+# - tesseract-ocr-spa: Idioma español para el OCR.
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libglib2.0-0 \
+    tesseract-ocr \
+    tesseract-ocr-spa \
+    tesseract-ocr-por \
+    && rm -rf /var/lib/apt/lists/*
 
-# 4. Instalamos las librerías dentro del contenedor
+# 2. Copiamos requirements e instalamos librerías de Python
+COPY requirements.txt .
+# --no-cache-dir reduce el tamaño de la imagen final
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. AQUI ESTA LA MAGIA: Copiamos el resto del código (main.py)
+# 3. Copiamos el código
 COPY . .
 
-# 6. Decimos qué comando ejecutar al arrancar
+# 4. Arrancamos
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

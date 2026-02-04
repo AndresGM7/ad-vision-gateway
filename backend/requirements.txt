@@ -3,3 +3,9 @@ uvicorn
 httpx
 Pillow
 numpy
+# Librería para YOLO (Computer Vision moderno)
+ultralytics
+# Librería para OCR (Lectura de texto)
+pytesseract
+# OpenCV versión headless (sin interfaz gráfica, vital para servidores)
+opencv-python-headless
